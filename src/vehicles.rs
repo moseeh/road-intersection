@@ -87,4 +87,12 @@ e
         self.bounding_box.x = self.position.0;
         self.bounding_box.y = self.position.1;
     }
+    pub fn is_at_light(&self) -> bool {
+        match self.direction {
+            Direction::North => self.position.1 <= 300,  // Near top intersection
+            Direction::South => self.position.1 >= 300,  // Near bottom intersection
+            Direction::East => self.position.0 >= 350,   // Near right intersection
+            Direction::West => self.position.0 <= 450,   // Near left intersection
+        }
+    }
 }
