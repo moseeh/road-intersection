@@ -67,7 +67,7 @@ impl TrafficLight {
         canvas.fill_rect(self.bounding_box)?;
         
         // Draw pole
-        canvas.set_draw_color(100, 100, 100);
+        canvas.set_draw_color((100, 100, 100));
         let pole_rect = match self.direction {
             Direction::North => Rect::new(self.position.0 + 5, self.position.1 + Self::HEIGHT, 10, 30),
             Direction::South => Rect::new(self.position.0 + 5, self.position.1 - 30, 10, 30),

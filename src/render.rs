@@ -1,4 +1,4 @@
-use sdl2::{render::Canvas, video::Window, VideoSubsystem, Sdl};
+use sdl2::{render::Canvas, video::Window};
 
 pub struct Renderer {
     pub canvas: Canvas<Window>,
@@ -17,7 +17,7 @@ impl Renderer {
     }
 
     pub fn clear(&mut self) {
-        self.canvas.set_draw_color(0, 0, 0);
+        self.canvas.set_draw_color((0, 0, 0));
         self.canvas.clear();
     }
 

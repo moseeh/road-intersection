@@ -24,10 +24,10 @@ impl Road {
     /// 3. White intersection area
     pub fn render(&self, canvas: &mut Canvas<Window>) -> Result<(), String> {
 
-        canvas.set_draw_color(50, 50, 50);
+        canvas.set_draw_color((50, 50, 50));
         canvas.fill_rect(self.bounds)?;
 
-        canvas.set_draw_color(100, 100, 100);
+        canvas.set_draw_color((100, 100, 100));
     
         canvas.fill_rect(Rect::new(
             0,                                   
@@ -43,7 +43,7 @@ impl Road {
             self.bounds.height()               
         ))?;
 
-        canvas.set_draw_color(255, 255, 255);
+        canvas.set_draw_color((255, 255, 255));
         canvas.fill_rect(Rect::new(
             self.intersection_center.0 - self.intersection_size.0 / 2,  
             self.intersection_center.1 - self.intersection_size.1 / 2,  
