@@ -25,3 +25,14 @@ impl Route {
         }
     }
 }
+
+
+/// Vehicle entity with movement and rendering logic
+pub struct Vehicle {
+    pub position: (i32, i32),
+    pub direction: Direction,
+    pub route: Route,
+    pub velocity: i32,
+    pub color: (u8, u8, u8),
+    pub bounding_box: Rect,
+}
