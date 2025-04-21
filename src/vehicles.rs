@@ -95,4 +95,10 @@ e
             Direction::West => self.position.0 <= 450,   // Near left intersection
         }
     }
+
+    pub fn is_off_screen(&self) -> bool {
+        self.position.0 < -100 || self.position.0 > 900 ||
+        self.position.1 < -100 || self.position.1 > 700
+    }
+
 }
