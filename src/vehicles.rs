@@ -36,3 +36,9 @@ pub struct Vehicle {
     pub color: (u8, u8, u8),
     pub bounding_box: Rect,
 }
+
+impl Vehicle {
+    pub const SAFE_DISTANCE: i32 = 50;
+    pub const WIDTH: i32 = 30;
+    pub const HEIGHT: i32 = 20;
+}
