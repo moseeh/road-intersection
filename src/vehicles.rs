@@ -41,4 +41,19 @@ impl Vehicle {
     pub const SAFE_DISTANCE: i32 = 50;
     pub const WIDTH: i32 = 30;
     pub const HEIGHT: i32 = 20;
+
+    pub fn new(direction: Direction, route: Route) -> Self {
+        Self {
+            position: (0, 0), 
+            direction,
+            route,
+            velocity: 2, 
+            color: match route {
+                Route::Left => (255, 0, 0),   
+                Route::Right => (0, 255, 0),   
+                Route::Straight => (0, 0, 255), 
+            },
+            bounding_box: Rect::new(0, 0, Self::WIDTH, Self::HEIGHT),
+        }
+    }
 }
