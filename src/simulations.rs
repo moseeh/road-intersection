@@ -90,4 +90,26 @@ impl Simulation {
         Ok(())
     }
 
+
+     /// Determines if a vehicle is allowed to move based on:
+    /// - Traffic light state
+    /// - Distance to vehicle in front
+    fn can_vehicle_move(&self, vehicle_index: usize) -> bool {
+        let vehicle = &self.vehicles[vehicle_index];
+        
+        if let Some(light) = self.traffic_lights.iter().find(|l| l.direction == vehicle.direction) {
+            if light.state == traffic_light::LightState::Red && vehicle.is_at_light() {
+                return false;
+            }
+        }
+        
+        if vehicle_index > 0 {
+            let front_vehicle = &self.vehicles[vehicle_index - 1];
+            if vehicle.distance_to(front_vehicle) < Vehicle::SAFE_DISTANCE {
+                return false;
+            }
+        }
+        true
+    }
+
 }
