@@ -101,4 +101,30 @@ e
         self.position.1 < -100 || self.position.1 > 700
     }
 
+
+       /// Calculates squared distance to another vehicle (optimization)
+       pub fn distance_to(&self, other: &Vehicle) -> i32 {
+        ((self.position.0 - other.position.0).pow(2) as i32 + 
+        ((self.position.1 - other.position.1).pow(2)) as i32
+    }
+
+    /// Calculates squared distance to spawn point
+    pub fn distance_to_spawn_point(&self, spawn_direction: Direction) -> i32 {
+        let spawn_point = match spawn_direction {
+            Direction::North => (400, 600),  // Bottom center
+            Direction::South => (400, 0),    // Top center
+            Direction::East => (0, 300),    // Left center
+            Direction::West => (800, 300),   // Right center
+        };
+        
+        ((self.position.0 - spawn_point.0).pow(2) + 
+         (self.position.1 - spawn_point.1).pow(2)) as i32
+    }
+
+    /// Renders vehicle as colored rectangle
+    pub fn render(&self, canvas: &mut Canvas<Window>) -> Result<(), String> {
+        canvas.set_draw_color(self.color);
+        canvas.fill_rect(self.bounding_box)?;
+        Ok(())
+    }
 }
