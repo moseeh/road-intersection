@@ -38,4 +38,36 @@ impl Simulation {
             spawn_cooldown: Duration::from_secs(1),
         })
     }
+
+        /// Handles events, updates game state, and renders the scene
+     pub fn run(&mut self) -> Result<(), String> {
+        // Get SDL event pump for handling input
+        let mut event_pump = self.renderer.sdl_context.event_pump()?;
+        
+        // Main game loop
+        while self.is_running {
+    
+            for event in event_pump.poll_iter() {
+                match event {
+                    // Handle window close and ESC key for quitting
+                    Event::Quit {..} |
+                    Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                        self.is_running = false;
+                    },
+                    _ => {}
+                }
+                // Handle other events like key presses
+                self.input_handler.handle_event(event, self);
+            }
+
+            self.update()?;
+
+            self.render()?;
+
+            // Cap at ~60 FPS
+            ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        }
+        Ok(())
+    }
+
 }
