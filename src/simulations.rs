@@ -131,4 +131,29 @@ impl Simulation {
         Ok(())
     }
 
+
+     /// Attempts to spawn a new vehicle from specified direction
+    /// Enforces spawn cooldown and safe spacing
+    pub fn spawn_vehicle(&mut self, direction: vehicle::Direction) -> Result<(), String> {
+        if self.last_spawn_time.elapsed() < self.spawn_cooldown {
+            return Ok(());
+        }
+        
+        if let Some(last_vehicle) = self.vehicles.last() {
+            if last_vehicle.distance_to_spawn_point(direction) < Vehicle::SAFE_DISTANCE * 2 {
+                return Ok(());
+            }
+        }
+        
+        let route = vehicle::Route::random();
+        let mut vehicle = Vehicle::new(direction, route);
+        
+        vehicle.set_spawn_position(&self.road);
+        
+        self.vehicles.push(vehicle);
+        self.last_spawn_time = Instant::now();
+        
+        Ok(())
+    }
+
 }
