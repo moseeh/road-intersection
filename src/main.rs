@@ -1,3 +1,5 @@
-fn main() {
-    println!("Hello, world!");
+fn main()-> Result<(), String>{
+let mut simulation = Simulation::new()?;
+    simulation.run()?;
+    Ok(())
 }
