@@ -104,8 +104,9 @@ e
 
        /// Calculates squared distance to another vehicle (optimization)
        pub fn distance_to(&self, other: &Vehicle) -> i32 {
-        ((self.position.0 - other.position.0).pow(2) as i32 + 
-        ((self.position.1 - other.position.1).pow(2)) as i32
+        let dx = (self.position.0 - other.position.0).pow(2) as i32;
+        let dy = (self.position.1 - other.position.1).pow(2) as i32;
+        dx + dy
     }
 
     /// Calculates squared distance to spawn point
