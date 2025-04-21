@@ -56,4 +56,18 @@ impl Vehicle {
             bounding_box: Rect::new(0, 0, Self::WIDTH, Self::HEIGHT),
         }
     }
+
+        pub fn set_spawn_position(&mut self, road: &crate::road::Road) {
+            self.position = match self.direction {
+e
+                Direction::North => (road.intersection_center.0, road.bounds.height() as i32),
+               
+                Direction::South => (road.intersection_center.0, -Self::HEIGHT),
+              
+                Direction::East => (-Self::WIDTH, road.intersection_center.1),
+      
+                Direction::West => (road.bounds.width() as i32, road.intersection_center.1),
+            };
+            self.update_bounding_box();
+        }
 }
