@@ -70,4 +70,16 @@ e
             };
             self.update_bounding_box();
         }
+
+    pub fn update(&mut self, can_move: bool) {
+        if can_move {
+            match self.direction {
+                Direction::North => self.position.1 -= self.velocity, // Move up
+                Direction::South => self.position.1 += self.velocity, // Move down
+                Direction::East => self.position.0 += self.velocity,  // Move right
+                Direction::West => self.position.0 -= self.velocity,  // Move left
+            }
+        }
+        self.update_bounding_box();
+    }
 }
