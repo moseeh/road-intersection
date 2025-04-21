@@ -6,3 +6,10 @@ pub enum Direction {
     East,
     West,
 }
+
+#[derive(Debug, Clone, Copy)]
+pub enum Route {
+    Left,
+    Right,
+    Straight,
+}
