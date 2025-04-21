@@ -82,4 +82,9 @@ e
         }
         self.update_bounding_box();
     }
+
+    fn update_bounding_box(&mut self) {
+        self.bounding_box.x = self.position.0;
+        self.bounding_box.y = self.position.1;
+    }
 }
