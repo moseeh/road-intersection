@@ -112,4 +112,23 @@ impl Simulation {
         true
     }
 
+
+     /// Renders all simulation components (called each frame)
+     fn render(&mut self) -> Result<(), String> {
+        self.render.clear();
+        
+        self.road.render(&mut self.render)?;
+        
+        for light in &self.traffic_lights {
+            light.render(&mut self.render)?;
+        }
+        
+        for vehicle in &self.vehicles {
+            vehicle.render(&mut self.render)?;
+        }
+        
+        self.render.present();
+        Ok(())
+    }
+
 }
