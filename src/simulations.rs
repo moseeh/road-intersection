@@ -70,4 +70,24 @@ impl Simulation {
         Ok(())
     }
 
+     /// Updates all simulation state (called each frame)
+     fn update(&mut self) -> Result<(), String> {
+    
+        for light in &mut self.traffic_lights {
+            light.update();
+        }
+
+        // Update all vehicles
+        for i in 0..self.vehicles.len() {
+            let can_move = self.can_vehicle_move(i);
+            self.vehicles[i].update(can_move);
+            if self.vehicles[i].is_off_screen() {
+                self.vehicles.remove(i);
+                break; 
+            }
+        }
+
+        Ok(())
+    }
+
 }
