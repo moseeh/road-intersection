@@ -2,6 +2,7 @@
 mod intersection;
 mod road;
 mod traffic_light;
+mod vehicle;
 
 use sdl2::event::Event;
 use sdl2::pixels::Color;
@@ -9,6 +10,7 @@ use std::time::Duration;
 
 use intersection::Intersection;
 use traffic_light::TrafficLight;
+use vehicle::{Direction, Vehicle};
 
 use road::Road;
 
@@ -47,6 +49,13 @@ fn main() -> Result<(), String> {
     let mut light_e = TrafficLight::new(320, 320, 20, 20);
     // Just outside the horizontal road’s top edge (west-bound traffic)
     let mut light_w = TrafficLight::new(460, 320, 20, 20);
+    // Vehicle container and initial spawns
+    let mut vehicles = vec![
+        Vehicle::new(Direction::North),
+        Vehicle::new(Direction::South),
+        Vehicle::new(Direction::East),
+        Vehicle::new(Direction::West),
+    ];
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut n = 0;
@@ -67,6 +76,9 @@ fn main() -> Result<(), String> {
             light_w.update();
             n = 0;
         }
+        for vehicle in vehicles.iter_mut() {
+            vehicle.update();
+        }
 
         // Drawing
         canvas.set_draw_color(Color::RGB(0, 0, 0));
@@ -79,6 +91,9 @@ fn main() -> Result<(), String> {
         light_s.draw(&mut canvas);
         light_e.draw(&mut canvas);
         light_w.draw(&mut canvas);
+        for vehicle in &vehicles {
+            vehicle.draw(&mut canvas);
+        }
         canvas.present();
 
         std::thread::sleep(Duration::from_millis(16));
