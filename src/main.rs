@@ -2,7 +2,7 @@ mod simulation;
 mod vehicle;
 mod traffic_light;
 mod road;
-mod render;
+mod renderer;
 mod input;
 
 use simulation::Simulation;

@@ -1,19 +1,13 @@
 use sdl2::{event::Event, keyboard::Keycode};
 use std::time::{Duration, Instant};
-use crate::{
-    vehicle::{Vehicle, Direction, Route},
-    traffic_light::{TrafficLight, LightState},
-    road::Road,
-    input::InputHandler,
-    renderer::Renderer
-};
+use crate::{vehicle::Vehicle, traffic_light::TrafficLight, road::Road, input::InputHandler, renderer::Renderer};
 
 pub struct Simulation {
     pub vehicles: Vec<Vehicle>,
     pub traffic_lights: Vec<TrafficLight>,
     pub road: Road,
     pub input_handler: InputHandler,
-    pub render: Rende,
+    pub renderer: Renderer,
     pub is_running: bool,
     pub last_spawn_time: Instant,
     pub spawn_cooldown: Duration,
@@ -29,7 +23,7 @@ impl Simulation {
             .build()
             .map_err(|e| e.to_string())?;
 
-        let render = Render::new(window)?;
+        let renderer = Renderer::new(window)?;
         let road = Road::new();
         let traffic_lights = TrafficLight::create_intersection_lights();
         
@@ -38,113 +32,105 @@ impl Simulation {
             traffic_lights,
             road,
             input_handler: InputHandler::new(),
-            render,
+            renderer,
             is_running: true,
             last_spawn_time: Instant::now(),
             spawn_cooldown: Duration::from_secs(1),
         })
     }
 
-        /// Handles events, updates game state, and renders the scene
-     pub fn run(&mut self) -> Result<(), String> {
-        // Get SDL event pump for handling input
+    pub fn run(&mut self) -> Result<(), String> {
         let mut event_pump = self.renderer.sdl_context.event_pump()?;
         
-        // Main game loop
         while self.is_running {
-    
+            // Handle events
             for event in event_pump.poll_iter() {
                 match event {
-                    // Handle window close and ESC key for quitting
                     Event::Quit {..} |
                     Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                         self.is_running = false;
                     },
                     _ => {}
                 }
-                // Handle other events like key presses
                 self.input_handler.handle_event(event, self);
             }
 
+            // Update
             self.update()?;
 
+            // Render
             self.render()?;
 
-            // Cap at ~60 FPS
+            // Cap at 60 FPS
             ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         }
         Ok(())
     }
 
-     /// Updates all simulation state (called each frame)
-     fn update(&mut self) -> Result<(), String> {
-    
+    fn update(&mut self) -> Result<(), String> {
+        // Update traffic lights
         for light in &mut self.traffic_lights {
             light.update();
         }
 
-        // Update all vehicles
+        // Update vehicles
         for i in 0..self.vehicles.len() {
             let can_move = self.can_vehicle_move(i);
             self.vehicles[i].update(can_move);
+            
+            // Remove vehicles that have exited the screen
             if self.vehicles[i].is_off_screen() {
                 self.vehicles.remove(i);
-                break; 
+                break; // Exit loop to avoid indexing issues
             }
         }
 
         Ok(())
     }
 
-
-     /// Determines if a vehicle is allowed to move based on:
-    /// - Traffic light state
-    /// - Distance to vehicle in front
     fn can_vehicle_move(&self, vehicle_index: usize) -> bool {
         let vehicle = &self.vehicles[vehicle_index];
         
+        // Check traffic light
         if let Some(light) = self.traffic_lights.iter().find(|l| l.direction == vehicle.direction) {
             if light.state == traffic_light::LightState::Red && vehicle.is_at_light() {
                 return false;
             }
         }
         
+        // Check vehicle in front
         if vehicle_index > 0 {
             let front_vehicle = &self.vehicles[vehicle_index - 1];
             if vehicle.distance_to(front_vehicle) < Vehicle::SAFE_DISTANCE {
                 return false;
             }
         }
+        
         true
     }
 
-
-     /// Renders all simulation components (called each frame)
-     fn render(&mut self) -> Result<(), String> {
-        self.render.clear();
-        
-        self.road.render(&mut self.render)?;
+    fn render(&mut self) -> Result<(), String> {
+        self.renderer.clear();
+        self.road.render(&mut self.renderer)?;
         
         for light in &self.traffic_lights {
-            light.render(&mut self.render)?;
+            light.render(&mut self.renderer)?;
         }
         
         for vehicle in &self.vehicles {
-            vehicle.render(&mut self.render)?;
+            vehicle.render(&mut self.renderer)?;
         }
         
-        self.render.present();
+        self.renderer.present();
         Ok(())
     }
 
-
-     /// Attempts to spawn a new vehicle from specified direction
-    /// Enforces spawn cooldown and safe spacing
     pub fn spawn_vehicle(&mut self, direction: vehicle::Direction) -> Result<(), String> {
         if self.last_spawn_time.elapsed() < self.spawn_cooldown {
             return Ok(());
         }
         
+        // Check if there's space to spawn a new vehicle
         if let Some(last_vehicle) = self.vehicles.last() {
             if last_vehicle.distance_to_spawn_point(direction) < Vehicle::SAFE_DISTANCE * 2 {
                 return Ok(());
@@ -153,7 +139,6 @@ impl Simulation {
         
         let route = vehicle::Route::random();
         let mut vehicle = Vehicle::new(direction, route);
-        
         vehicle.set_spawn_position(&self.road);
         
         self.vehicles.push(vehicle);
@@ -161,5 +146,4 @@ impl Simulation {
         
         Ok(())
     }
-
 }

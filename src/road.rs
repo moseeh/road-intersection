@@ -1,56 +1,27 @@
-use sdl2::rect::Rect;
-use sdl2::render::Canvas;
-use sdl2::video::Window;
+use sdl2::{render::Canvas, video::Window, VideoSubsystem, Sdl};
 
-pub struct Road {
-    pub bounds: Rect,
-    pub intersection_center: (i32, i32),
-    pub intersection_size: (i32, i32),
+pub struct Renderer {
+    pub canvas: Canvas<Window>,
+    pub sdl_context: Sdl,
 }
 
-impl Road {
-    pub fn new() -> Self {
-        Self {
-            bounds: Rect::new(0, 0, 800, 600),
-            intersection_center: (400, 300),
-            intersection_size: (100, 100),
-        }
+impl Renderer {
+    pub fn new(window: sdl2::video::Window) -> Result<Self, String> {
+        let sdl_context = sdl2::init()?;
+        let canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
+        
+        Ok(Self {
+            canvas,
+            sdl_context,
+        })
     }
 
-      /// Renders the road network to the screen
-    /// Draws in three layers:
-    /// 1. Dark gray background
-    /// 2. Light gray roads
-    /// 3. White intersection area
-    pub fn render(&self, canvas: &mut Canvas<Window>) -> Result<(), String> {
+    pub fn clear(&mut self) {
+        self.canvas.set_draw_color(0, 0, 0);
+        self.canvas.clear();
+    }
 
-        canvas.set_draw_color((50, 50, 50));
-        canvas.fill_rect(self.bounds)?;
-
-        canvas.set_draw_color((100, 100, 100));
-    
-        canvas.fill_rect(Rect::new(
-            0,                                   
-            self.intersection_center.1 - 25,     
-            self.bounds.width(),               
-            50                                  
-        ))?;
-        
-        canvas.fill_rect(Rect::new(
-            self.intersection_center.0 - 25,     
-            0,                                   
-            50,                                   
-            self.bounds.height()               
-        ))?;
-
-        canvas.set_draw_color((255, 255, 255));
-        canvas.fill_rect(Rect::new(
-            self.intersection_center.0 - self.intersection_size.0 / 2,  
-            self.intersection_center.1 - self.intersection_size.1 / 2,  
-            self.intersection_size.0 as u32,                            
-            self.intersection_size.1 as u32                           
-        ))?;
-
-        Ok(())
+    pub fn present(&mut self) {
+        self.canvas.present();
     }
 }
