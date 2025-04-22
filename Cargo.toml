@@ -1,9 +1,8 @@
 [package]
 name = "road_intersection"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-sdl2 = "0.37.0"
-rand = "0.8"
-lazy_static = "1.4"
+sdl2 = { version = "0.35.2", features = ["image"] }
+rand = "0.8.5"
