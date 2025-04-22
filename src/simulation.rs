@@ -1,6 +1,12 @@
 use sdl2::{event::Event, keyboard::Keycode};
 use std::time::{Duration, Instant};
-use crate::{vehicle::Vehicle, traffic_light::TrafficLight, road::Road, input::InputHandler, render::Render};
+use crate::{
+    vehicle::{Vehicle, Direction, Route},
+    traffic_light::{TrafficLight, LightState},
+    road::Road,
+    input::InputHandler,
+    renderer::Renderer
+};
 
 pub struct Simulation {
     pub vehicles: Vec<Vehicle>,

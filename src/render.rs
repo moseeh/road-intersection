@@ -1,4 +1,4 @@
-use sdl2::{render::Canvas, video::Window};
+use sdl2::{render::Canvas, video::Window, Sdl};
 
 pub struct Renderer {
     pub canvas: Canvas<Window>,
