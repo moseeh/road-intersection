@@ -1,4 +1,8 @@
 use rand::Rng;
+use sdl2::rect::Rect;
+use sdl2::render::Canvas;
+use sdl2::video::Window;
+use rand::Rng;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Direction {
