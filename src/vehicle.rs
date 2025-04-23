@@ -26,7 +26,8 @@ pub struct Vehicle {
     velocity: i32,
     color: Color,
     turn: Turn,
-    has_turned: bool,
+    pub has_turned: bool,
+    pub in_intersection: bool,
 }
 
 impl Vehicle {
@@ -52,12 +53,28 @@ impl Vehicle {
             color,
             turn,
             has_turned: false,
+            in_intersection: false,
         }
     }
 
     pub fn update(&mut self, light_state: LightState) {
-        if self.should_stop_at_light(light_state) {
+        if self.in_intersection || self.has_turned {
+            // Proceed to move regardless of light
+        } else if self.should_stop_at_light(light_state) {
             return;
+        }
+        if !self.has_turned && !self.in_intersection {
+            // Detect entry into intersection bounds (e.g., 350 <= x/y <= 450)
+            let in_intersection = match self.direction {
+                Direction::North => self.rect.y() <= 450,
+                Direction::South => self.rect.y() + self.rect.height() as i32 >= 350,
+                Direction::East => self.rect.x() + self.rect.width() as i32 >= 350,
+                Direction::West => self.rect.x() <= 450,
+            };
+
+            if in_intersection {
+                self.in_intersection = true;
+            }
         }
         if !self.has_turned {
             let turn_point = match (self.direction, self.turn) {
@@ -111,6 +128,9 @@ impl Vehicle {
     }
 
     fn should_stop_at_light(&self, light_state: LightState) -> bool {
+        if self.in_intersection || self.has_turned {
+            return false;
+        }
         if light_state == LightState::Green {
             return false;
         }
