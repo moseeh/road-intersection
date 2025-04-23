@@ -122,7 +122,7 @@ fn main() -> Result<(), String> {
         // Inside the main loop's update section:
 
         // Compute tentative positions (with traffic light checks)
-        let  tentatives: Vec<Vehicle> = vehicles
+        let tentatives: Vec<Vehicle> = vehicles
             .iter()
             .map(|v| {
                 let mut tentative_v = v.clone();
@@ -177,11 +177,19 @@ fn main() -> Result<(), String> {
             }
         }
 
-        // Also check for collisions
+        // Inside the main loop's collision check:
         let mut collisions = vec![false; tentatives.len()];
         for i in 0..tentatives.len() {
             for j in (i + 1)..tentatives.len() {
-                if tentatives[i].rect().has_intersection(tentatives[j].rect()) {
+                let a = &tentatives[i];
+                let b = &tentatives[j];
+
+                // Allow vehicles in the intersection to pass through
+                if (a.in_intersection || b.in_intersection) && !a.has_turned && !b.has_turned {
+                    continue; // Skip collision check if either is in the intersection
+                }
+
+                if a.rect().has_intersection(b.rect()) {
                     collisions[i] = true;
                     collisions[j] = true;
                 }
