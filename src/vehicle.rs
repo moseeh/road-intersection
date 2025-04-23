@@ -4,6 +4,8 @@ use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
+use crate::traffic_light::LightState;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Direction {
     North,
@@ -17,9 +19,9 @@ pub enum Turn {
     Right,
     Left,
 }
-
+#[derive(Clone)]
 pub struct Vehicle {
-    rect: Rect,
+    pub rect: Rect,
     direction: Direction,
     velocity: i32,
     color: Color,
@@ -53,7 +55,10 @@ impl Vehicle {
         }
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, light_state: LightState) {
+        if self.should_stop_at_light(light_state) {
+            return;
+        }
         if !self.has_turned {
             let turn_point = match (self.direction, self.turn) {
                 // Left turns
@@ -105,17 +110,25 @@ impl Vehicle {
         self.rect
     }
 
-    // Check if the vehicle is at a safe distance from its spawn point
-    // This helps prevent immediately spawning vehicles on top of each other
-    pub fn is_safe_distance(&self) -> bool {
+    fn should_stop_at_light(&self, light_state: LightState) -> bool {
+        if light_state == LightState::Green {
+            return false;
+        }
+
+        // Calculate distance to stop line
         match self.direction {
-            Direction::North => self.rect.y() < 750, // Vehicle has moved away from spawn point
-            Direction::South => self.rect.y() > 10,
-            Direction::East => self.rect.x() > 10,
-            Direction::West => self.rect.x() < 750,
+            Direction::North => self.rect.y() > 350 && self.rect.y() <= 450,
+            Direction::South => {
+                (self.rect.y() + self.rect.height() as i32) < 450
+                    && (self.rect.y() + self.rect.height() as i32) >= 350
+            }
+            Direction::East => {
+                (self.rect.x() + self.rect.width() as i32) < 450
+                    && (self.rect.x() + self.rect.width() as i32) >= 350
+            }
+            Direction::West => self.rect.x() > 350 && self.rect.x() <= 450,
         }
     }
-
     pub fn apply_turn(&mut self) {
         self.direction = match (self.direction, self.turn) {
             // Go straight: no change
