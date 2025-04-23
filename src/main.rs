@@ -12,8 +12,9 @@ use std::collections::HashMap;
 use std::time::Duration;
 
 use intersection::Intersection;
-use traffic_light::TrafficLight;
+use traffic_light::{TrafficLight, LightState};
 use vehicle::{Direction, Vehicle};
+
 
 use road::Road;
 
@@ -46,10 +47,10 @@ fn main() -> Result<(), String> {
     let road_ew = Road::new_horizontal(0, 350, 800, 100); // East‑West road 
     let intersection = Intersection::new(road_ns, road_ew);
 
-    let mut light_n = TrafficLight::new(460, 460, 20, 20);
-    let mut light_s = TrafficLight::new(320, 460, 20, 20);
-    let mut light_e = TrafficLight::new(320, 320, 20, 20);
-    let mut light_w = TrafficLight::new(460, 320, 20, 20);
+    let mut light_s = TrafficLight::new(460, 460, 20, 20, LightState::Red);
+    let mut light_w = TrafficLight::new(320, 460, 20, 20, LightState::Green);
+    let mut light_n = TrafficLight::new(320, 320, 20, 20, LightState::Red);
+    let mut light_e = TrafficLight::new(460, 320, 20, 20, LightState::Green);
     let mut vehicles = Vec::new();
 
     // Track the last spawn time for each direction to enforce safe distance
@@ -63,6 +64,7 @@ fn main() -> Result<(), String> {
     let mut event_pump = sdl_context.event_pump()?;
     let mut n = 0;
     let mut frame_count = 0;
+    let mut is_green = false;
 
     'running: loop {
         frame_count += 1;
@@ -110,12 +112,12 @@ fn main() -> Result<(), String> {
 
         // Update logic
         n += 1;
-        if n > 100 {
-            // Update lights
-            light_n.update();
-            light_s.update();
-            light_e.update();
-            light_w.update();
+        if n > 500 {
+            is_green = !is_green;
+            light_n.update(is_green);
+            light_s.update(is_green);
+            light_e.update(!is_green);
+            light_w.update(!is_green);
             n = 0;
         }
 
