@@ -1,4 +1,3 @@
-use rand::Rng;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
@@ -15,15 +14,14 @@ pub struct TrafficLight {
 }
 
 impl TrafficLight {
-    pub fn new(x: i32, y: i32, w: u32, h: u32) -> Self {
+    pub fn new(x: i32, y: i32, w: u32, h: u32, state: LightState) -> Self {
         TrafficLight {
             rect: Rect::new(x, y, w, h),
-            state: LightState::Red,
+            state,
         }
     }
-    pub fn update(&mut self) {
-        let mut rng = rand::rng();
-        self.state = if rng.random_bool(0.5) {
+    pub fn update(&mut self, is_green: bool) {
+        self.state = if is_green {
             LightState::Green
         } else {
             LightState::Red
