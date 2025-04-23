@@ -18,7 +18,7 @@ use vehicle::{Direction, Vehicle};
 
 use road::Road;
 
-const SAFE_DISTANCE: i32 = 100; // Minimum safe distance between vehicles
+const SAFE_DISTANCE: i32 = 50; // Minimum safe distance between vehicles
 
 fn main() -> Result<(), String> {
     // Initialize SDL2 context and video subsystem
