@@ -93,6 +93,6 @@ rand = "0.9"
 
 ## Contributors
 
--  [Moses Onyango](https://github.com/moonyango)
-- [Alice Okingo](https://github.com/aokingo)
-- [Doreen Onyango](https://github.com/doonyango)
+-  [Moses Onyango](https://learn.zone01kisumu.ke/git/moonyango)
+- [Alice Okingo](https://github.com/Anne-Okingo)
+- [Doreen Onyango](https://learn.zone01kisumu.ke/git/doonyango)
