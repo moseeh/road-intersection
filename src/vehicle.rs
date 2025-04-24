@@ -32,7 +32,7 @@ pub struct Vehicle {
 
 impl Vehicle {
     pub fn new(direction: Direction) -> Self {
-        let velocity = 2;
+        let velocity = 5;
         let rect = match direction {
             Direction::North => Rect::new(415, 800, 20, 40),
             Direction::South => Rect::new(365, -40, 20, 40),
