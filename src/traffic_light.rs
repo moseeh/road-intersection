@@ -36,4 +36,7 @@ impl TrafficLight {
         canvas.set_draw_color(color);
         let _ = canvas.fill_rect(self.rect);
     }
+    pub fn state(&self) -> LightState {
+        self.state
+    }
 }
