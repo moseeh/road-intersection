@@ -47,9 +47,9 @@ fn main() -> Result<(), String> {
     let intersection = Intersection::new(road_ns, road_ew);
 
     let mut light_s = TrafficLight::new(460, 460, 20, 20, LightState::Red);
-    let mut light_w = TrafficLight::new(320, 460, 20, 20, LightState::Green);
-    let mut light_n = TrafficLight::new(320, 320, 20, 20, LightState::Red);
-    let mut light_e = TrafficLight::new(460, 320, 20, 20, LightState::Green);
+    let mut light_w = TrafficLight::new(320, 460, 20, 20, LightState::Red);
+    let mut light_n = TrafficLight::new(320, 320, 20, 20, LightState::Green);
+    let mut light_e = TrafficLight::new(460, 320, 20, 20, LightState::Red);
     let mut vehicles = Vec::new();
 
     // Track the last spawn time for each direction to enforce safe distance
@@ -63,7 +63,7 @@ fn main() -> Result<(), String> {
     let mut event_pump = sdl_context.event_pump()?;
     let mut n = 0;
     let mut frame_count = 0;
-    let mut is_green = false;
+    let mut current_light: u8 = 1;
 
     'running: loop {
         frame_count += 1;
@@ -111,12 +111,23 @@ fn main() -> Result<(), String> {
 
         // Update logic
         n += 1;
-        if n > 500 {
-            is_green = !is_green;
-            light_n.update(is_green);
-            light_s.update(is_green);
-            light_e.update(!is_green);
-            light_w.update(!is_green);
+        if n > 150 {
+            // Turn all lights red
+            light_n.update(false);
+            light_s.update(false);
+            light_e.update(false);
+            light_w.update(false);
+
+            match current_light {
+                0 => light_n.update(true),
+                1 => light_e.update(true),
+                2 => light_s.update(true),
+                3 => light_w.update(true),
+                _ => (),
+            }
+
+            // Move to the next light
+            current_light = (current_light + 1) % 4;
             n = 0;
         }
         // Inside the main loop's update section:
