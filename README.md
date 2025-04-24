@@ -1,81 +1,98 @@
 # ROAD INTERSECTION
 
-This project simulates a traffic intersection using the Rust programming language and the `sdl2` graphics library.
-It reduces traffic congestion and avoids vehicle collisions by implementing a simple traffic control strategy with traffic lights and vehicle behavior modeling.
+This is a realistic traffic intersection simulation built with Rust and SDL2, featuring vehicle spawning, traffic light control, and collision avoidance.
 
-## Overview
+## Features
 
-The simulation includes:
-- Two intersecting roads (vertical and horizontal), each with one lane per direction.
-- Vehicles that spawn from any direction (North, South, East, or West).
-- Vehicles that follow a predetermined route: left turn, right turn, or straight.
-- Traffic lights with red and green signals.
-- Safety rules to avoid collisions and maintain safe distances.
-- Keyboard controls to spawn vehicles interactively.
+### Core Components
+- **Road System**:
+  - Vertical (North-South) and horizontal (East-West) roads
+  - 4-lane intersection with proper dimensions (800x800 window)
+- **Traffic Lights**:
+  - Four lights (N, S, E, W) with Red/Green states
+  - Cyclic switching every 150 frames (≈2.5 seconds at 60fps)
+  - All-way red phase during transitions
+- **Vehicles**:
+  - Direction-based spawning (North, South, East, West)
+  - Color-coded by direction
+  - Fixed velocity and safe following distance (50px)
+  - Automatic stopping for red lights and preceding vehicles
 
-```
-                North
-            |  ↓  |  ↑  |
-            |  ↓  |  ↑  |
-            |     |     |
-            |     |     |
-            |     |     |
-            |     |     |
- ___________|     |     |__________
- ← ←                             ← ←
-East -----------     ----------- West
- → →                             → →
- ___________     ___________
-            |     |     |
-            |     |     |
-            |     |     |
-            |     |     |
-            |     |     |
-            |  ↓  |  ↑  |
-            |  ↓  |  ↑  |
-                South
+### Advanced Systems
+- **Collision Prevention**:
+  - Tentative movement prediction
+  - Intersection zone handling
+  - Direction-specific distance checks
+- **Safe Spawning**:
+  - Minimum 25-frame cooldown between spawns
+  - Distance checks from existing vehicles
+  - Direction-specific spawn points
+
+## Installation
+
+### Prerequisites
+- Rust toolchain (install via [rustup](https://rustup.rs/))
+- SDL2 development libraries
+
+### Build & Run
+```bash
+cargo build --release
+cargo run --release
 ```
 
 ## Controls
 
-| Key       | Action                                                                 |
-|-----------|------------------------------------------------------------------------|
-| ↑         | Spawn a vehicle from the **South** towards North                       |
-| ↓         | Spawn a vehicle from the **North** towards South                       |
-| ←         | Spawn a vehicle from the **East** towards West                         |
-| →         | Spawn a vehicle from the **West** towards East                         |
-| `r`       | Spawn a vehicle from a **random direction and random route**           |
-| `Esc`     | Quit the simulation                                                    |
+| Key       | Action                          |
+|-----------|---------------------------------|
+| ↑         | Spawn northbound vehicle        |
+| ↓         | Spawn southbound vehicle        |
+| ←         | Spawn westbound vehicle         |
+| →         | Spawn eastbound vehicle         |
+| R         | Spawn random-direction vehicle  |
+| Esc       | Quit simulation                 |
 
-**Note** Vehicle spamming is disabled. Vehicles are only added if there's a safe gap between existing ones.
+## Technical Implementation
 
-## Vehicle Behavior
+### Core Modules
 
-- Vehicles maintain **fixed speed** and keep a **safe distance** from the car in front.
-- Each vehicle follows a route it is assigned at spawn time (left, straight, or right).
-- Vehicles will **obey traffic lights**: stop at red, move at green.
-- Color codes differentiate vehicle routes (e.g. right-turn = Yellow, left-turn = Blue, etc).
-
-## Traffic Lights
-
-- Positioned at the entrance of each lane at the intersection.
-- Alternate red and green lights using a simple timer-based algorithm.
-- Ensure **no more than one non-conflicting direction proceeds at once**.
-- Primary goal: **avoid intersection collisions and reduce congestion**.
-
-## Requirements
-
-- Rust (latest stable)
-- SDL2 development libraries
-
-### Linux / Mac:
-```bash
-sudo apt install libsdl2-dev
+```rust
+src/
+├── main.rs          # SDL setup, game loop, input handling
+├── intersection.rs  # Intersection logic and rendering
+├── road.rs          # Road geometry and drawing
+├── traffic_light.rs # Light states and timing
+└── vehicle.rs       # Vehicle behavior and physics
 ```
 
-## Build & Run
+## Configuration
 
-```bash
-cargo build 
-cargo run
+| Constant            | Value | Description                      |
+|---------------------|-------|----------------------------------|
+| `SAFE_DISTANCE`     | 50    | Minimum distance between vehicles |
+| `LIGHT_SWITCH_FREQ` | 150   | Frames between light changes      |
+
+## Future Improvements
+
+- [ ] Add turning animations
+- [ ] Implement dynamic light timing
+- [ ] Add pedestrian crossings
+- [ ] Support emergency vehicles
+
+## Dependencies
+
+```toml
+[dependencies]
+sdl2 = "0.37.0"
+rand = "0.9"
 ```
+## Resources
+
+- [SDL2 Documentation](https://docs.rs/sdl2/latest/sdl2/)
+- [Rust-SDL2 Guide](https://github.com/Rust-SDL2/rust-sdl2)
+- [Traffic Simulation Theory (Wikipedia)](https://en.wikipedia.org/wiki/Traffic_simulation)
+
+## Contributors
+
+-  [Moses Onyango](https://github.com/moonyango)
+- [Alice Okingo](https://github.com/aokingo)
+- [Doreen Onyango](https://github.com/doonyango)
